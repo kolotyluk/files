@@ -41,6 +41,7 @@
 -->
 
     <properties>
+        <error-prone.version>2.21.1</error-prone.version>
         <java.version>21</java.version>
         <java.fx.version>20.0.2</java.fx.version>
         <junit.version>5.10.0</junit.version>
@@ -112,6 +113,22 @@
                     <configuration>
                         <source>${java.version}</source>
                         <target>${java.version}</target>
+                        <compilerArgs>
+                            <arg>-XDcompilePolicy=simple</arg>
+                            <arg>-Xplugin:ErrorProne</arg>
+                        </compilerArgs>
+                        <annotationProcessorPaths>
+                            <path>
+                                <groupId>com.google.errorprone</groupId>
+                                <artifactId>error_prone_core</artifactId>
+                                <version>${error-prone.version}</version>
+                            </path>
+                            <!-- Other annotation processors go here.
+
+                            If 'annotationProcessorPaths' is set, processors will no longer be
+                            discovered on the regular -classpath; see also 'Using Error Prone
+                            together with other annotation processors' below. -->
+                        </annotationProcessorPaths>
                     </configuration>
                 </plugin>
                 <plugin>
