@@ -18,7 +18,6 @@ object ContentEqual {
     /**
      * # Identical File Contents
      *
-     *
      * Uses
      * [Memory Mapped Files](http://en.wikipedia.org/wiki/Memory-mapped_file)
      * for fast comparison of large files. This is about 4 times faster than calling<pre>
@@ -29,12 +28,10 @@ object ContentEqual {
      * files. Performance may suffer slightly for smaller files.
      * A future version may be optimized for smaller files too.
      *
-     *
      * Useful for checking if media files, such as music and video,
      * have identical or duplicate content. Video files can easily
      * be over 4 GiB in size. Technically this method will compare
      * files as large as the file system supports.
-     *
      *
      * Performance is about 16 seconds for two 4 GiB files with
      * identical content on an Intel Xeon 5580 at 3.2 GHz using a
@@ -59,39 +56,45 @@ object ContentEqual {
         val mapSize = Integer.MAX_VALUE.toLong()
 
         try {
-            val size = Files.size(file1)
-            if (size != Files.size(file2)) return false
-            var position: Long = 0
-            var length: Long = min(mapSize, size)
+            val fileSize = Files.size(file1)
+            if (fileSize != Files.size(file2)) return false
+            var mapSize: Long = min(mapSize, fileSize)
+            var mapPosition: Long = 0
 
             FileChannel.open(file1).use {channel1 ->
                 FileChannel.open(file2).use { channel2 ->
-                    while (length > 0) {
-                        val buffer1 = channel1.map(MapMode.READ_ONLY, position, length)
-                        val buffer2 = channel2.map(MapMode.READ_ONLY, position, length)
+                    while (mapSize > 0) {
+                        val buffer1 = channel1.map(MapMode.READ_ONLY, mapPosition, mapSize)
+                        val buffer2 = channel2.map(MapMode.READ_ONLY, mapPosition, mapSize)
                         try {
                             // if (!buffer1.equals(buffer2)) return false;
-                            // The line above is much slower than the line below.
+                            // The line above is much slower than the code below.
                             // It should not be, but it is, possibly because it is
                             // loading the entire buffer into memory before comparing
                             // the contents. See the corresponding unit test. EK
-                            for (i in 0 until length)
-                                if (buffer1.get() != buffer2.get()) return false
-                            position += length
-                            length = min(mapSize, size - position)
+                            var longs: Long = mapSize / 8
+                            var bytes: Long = mapSize % 8
+                            while (longs-- > 0) if (buffer1.long != buffer2.long) return false
+                            while (bytes-- > 0) if (buffer1.get() != buffer2.get()) return false
+                            mapPosition += mapSize
+                            mapSize = min(mapSize, fileSize - mapPosition)
                         } finally {
-                            // Is is important to clean up so we do not hold any
-                            // file locks, in case the caller wants to do something
-                            // else with the files.
+                            // This may be obsolete, but at the time, it did fix a problem.
+                            // It is important to clean up, so we do not hold any file locks,
+                            // in case the caller wants to do something else with the files.
 
                             // In terms of functional programming, holding a lock after
-                            // returning to the caller would be an unwelcome side-effect.
+                            // returning to the caller would be an unwelcome side effect.
                             cleanDirectByteBuffer(buffer1)
                             cleanDirectByteBuffer(buffer2)
                         }
                     }
                 }
             }
+
+            // This might be faster calling out to a foreign function interface. For example
+            // https://stackoverflow.com/questions/27339763/faster-memory-compare-for-equality-16-bytes-block-than-memcmp
+            // The only thing faster would be using assembly language, and specialized instructions such as ...
 
         } catch (e: Exception) {
             // TODO something useful

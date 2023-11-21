@@ -10,8 +10,10 @@
     <packaging>pom</packaging>
 
     <modules>
-        <module>content-equal</module>
+        <module>content</module>
+<!--
         <module>gui</module>
+-->
     </modules>
 
     <!-- More Project Information -->
@@ -47,6 +49,7 @@
         <junit.version>5.10.0</junit.version>
         <kotlin.version>1.9.20-Beta2</kotlin.version>
         <kotest.version>5.7.2</kotest.version>
+        <maven.plugin.validation>VERBOSE</maven.plugin.validation>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
@@ -132,14 +135,26 @@
                     </configuration>
                 </plugin>
                 <plugin>
+                    <artifactId>maven-project-info-reports-plugin</artifactId>
+                    <version>3.4.5</version>
+                </plugin>
+                <plugin>
+                    <artifactId>maven-resources-plugin</artifactId>
+                    <version>3.3.1</version>
+                </plugin>
+                <plugin>
                     <artifactId>maven-site-plugin</artifactId>
-                    <version>4.0.0-M8</version>
+                    <version>4.0.0-M10</version>
                     <configuration>
                         <locales>default</locales>
                     </configuration>
                 </plugin>
                 <plugin>
                     <artifactId>maven-surefire-plugin</artifactId>
+                    <version>3.1.2</version>
+                </plugin>
+                <plugin>
+                    <artifactId>maven-surefire-report-plugin</artifactId>
                     <version>3.1.2</version>
                 </plugin>
                 <plugin>

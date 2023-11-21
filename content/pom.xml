@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>net.kolotyluk.files</groupId>
-  <artifactId>content-equal</artifactId>
+  <artifactId>content</artifactId>
   <packaging>jar</packaging>
 
   <parent>
@@ -13,12 +13,8 @@
     <relativePath>../pom.xml</relativePath>
   </parent>
 
-  <name>content-equal</name>
+  <name>content</name>
   <url>http://maven.apache.org</url>
-
-  <properties>
-    <maven.plugin.validation>VERBOSE</maven.plugin.validation>
-  </properties>
 
   <dependencies>
     <dependency>
@@ -87,6 +83,7 @@
     </plugins>
   </build>
 
+<!--
   <reporting>
     <plugins>
       <plugin>
@@ -97,6 +94,15 @@
             <goal>surefire-report:report</goal>
           </goals>
         </configuration>
+      </plugin>
+    </plugins>
+  </reporting>
+-->
+
+  <reporting>
+    <plugins>
+      <plugin>
+        <artifactId>maven-surefire-report-plugin</artifactId>
       </plugin>
     </plugins>
   </reporting>

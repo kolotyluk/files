@@ -1,5 +1,6 @@
 package net.kolotyluk.files
 
+import io.kotest.core.spec.BeforeTest
 import io.kotest.core.spec.style.DescribeSpec
 import io.kotest.matchers.shouldBe
 import java.lang.Long.min
@@ -19,15 +20,21 @@ class ContentEqualTests : DescribeSpec({
     val file3 = kotlin.io.path.createTempFile(tempDirectory, "file3-", ".bin")
     val file4 = kotlin.io.path.createTempFile(tempDirectory, "file4-", ".bin")
 
-    val largeSize = Integer.MAX_VALUE * 10L
-    val smallSize = Short.MAX_VALUE * 10L
+//    val largeSize = Integer.MAX_VALUE * 10L
+    //val smallSize = Short.MAX_VALUE * 10L
+    val smallSize = Integer.MAX_VALUE * 10L
 
-    fill(file1, smallSize, 0)
-    fill(file2, smallSize, 0)
-    fill(file3, smallSize, 1)
-    fill(file4, smallSize - 1, 0)
+
+    val configureFiles: BeforeTest = {
+        fill(file1, smallSize, 0)
+        fill(file2, smallSize, 0)
+        fill(file3, smallSize, 1)
+        fill(file4, smallSize - 1, 0)
+    }
 
     describe("test ContentEqual functionality") {
+
+        beforeTest(configureFiles)
 
         it("mappedEqual same file") {
             ContentEqual.mappedFiles(file1, file1) shouldBe true
